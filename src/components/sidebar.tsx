@@ -7,7 +7,7 @@ import {
   Avatar,
   Typography,
 } from "@mui/material";
-import { useTheme } from "@emotion/react";
+import { useTheme } from "@mui/material/styles";
 import { useAuth0 } from "@auth0/auth0-react";
 
 import { GiPineTree } from "react-icons/gi";
