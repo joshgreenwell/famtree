@@ -1,13 +1,16 @@
 import { ElementType } from "react";
-import { Modal, Box, Button } from "@mui/material";
+import { Modal, Stack, Button, Typography } from "@mui/material";
 import { useAuth0 } from "@auth0/auth0-react";
+import { GiPineTree } from "react-icons/gi";
+import { useTheme } from "@mui/material/styles";
 
 type Props = {
-  open: boolean
+  open: boolean;
 };
 
 export const LoginModal: ElementType<Props> = ({ open }) => {
   const { loginWithRedirect } = useAuth0();
+  const theme = useTheme()
 
   return (
     <Modal
@@ -15,7 +18,9 @@ export const LoginModal: ElementType<Props> = ({ open }) => {
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
-      <Box
+      <Stack
+        spacing={4}
+        justifyContent="center"
         sx={{
           position: "absolute",
           top: "50%",
@@ -25,11 +30,22 @@ export const LoginModal: ElementType<Props> = ({ open }) => {
           bgcolor: "background.paper",
           boxShadow: 24,
           p: 4,
-          outline: "none"
+          outline: "none",
         }}
       >
-        <Button onClick={() => loginWithRedirect()}>Login</Button>
-      </Box>
+        <Stack>
+          <Stack direction='row' alignItems='center' justifyContent='center'>
+            <GiPineTree style={{ width: 75, height: 75, color: theme.palette.primary.main }} />
+          </Stack>
+          <Typography align='center' variant="h6">Please Log In</Typography>
+          <Typography align='center'>
+            You do not appear to be logged in.
+          </Typography>
+        </Stack>
+        <Button variant="outlined" onClick={() => loginWithRedirect()}>
+          Login
+        </Button>
+      </Stack>
     </Modal>
   );
 };

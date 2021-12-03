@@ -1,14 +1,46 @@
 import Head from "next/head";
+import { useEffect, useState } from "react";
 import { ThemeProvider } from "@mui/material/styles";
-import CssBaseline from "@mui/material/CssBaseline";
 // import { CacheProvider } from "@emotion/react";
-import { Auth0Provider } from "@auth0/auth0-react";
+import { Auth0Provider, useAuth0 } from "@auth0/auth0-react";
+import { CssBaseline, Stack } from "@mui/material";
 
-import emotionCache from "../src/utils/createEmotionCache";
+import { Sidebar } from "../src/components/sidebar";
+import { LoginModal } from "../src/components/login-modal";
+import { Loader } from "../src/components/loader";
+
+// import emotionCache from "../src/utils/createEmotionCache";
 import theme from "../src/utils/theme";
 
 import type { AppProps } from "next/app";
 
+/**
+ * Main wrapper component for every page to ensure login and sidebar functionality
+ */
+ const Main = ({ Component, pageProps }: AppProps) => {
+  const [showLogin, setShowLogin] = useState<boolean>(false);
+  const { isAuthenticated, isLoading } = useAuth0();
+
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      setShowLogin(true);
+    }
+  }, [isLoading, isAuthenticated]);
+
+  return (
+    <>
+      <LoginModal open={showLogin} />
+      <Sidebar />
+      <Stack sx={{ marginLeft: "89px" }}>
+        {isLoading ? <Loader height="100vh" /> : <Component {...pageProps} />}
+      </Stack>
+    </>
+  );
+};
+
+/**
+ * Setup providers and initial app page
+ */
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     // <CacheProvider value={emotionCache}>
@@ -24,7 +56,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       >
         <ThemeProvider theme={theme}>
           <CssBaseline />
-          <Component {...pageProps} />
+          <Main Component={Component} pageProps={pageProps} />
         </ThemeProvider>
       </Auth0Provider>
     </>

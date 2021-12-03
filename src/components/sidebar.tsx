@@ -1,4 +1,5 @@
-import { ElementType } from "react";
+import { ElementType, useState } from "react";
+import Link from "next/link";
 import {
   Drawer,
   List,
@@ -13,24 +14,34 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { GiPineTree } from "react-icons/gi";
 import LogoutIcon from "@mui/icons-material/Logout";
 import DashboardIcon from "@mui/icons-material/Dashboard";
-import ChatIcon from '@mui/icons-material/Chat';
+import ForumIcon from "@mui/icons-material/Forum";
+import ArticleIcon from "@mui/icons-material/Article";
 
 const drawerWidth = 90;
 
 const routes = [
   {
-    name: "Dashboard",
-    icon: <DashboardIcon color="primary" />,
+    name: "Family",
+    Icon: DashboardIcon,
+    link: "/",
   },
   {
-    name: "Chats",
-    icon: <ChatIcon color="primary" />,
+    name: "Posts",
+    Icon: ArticleIcon,
+    link: "/posts",
+  },
+  {
+    name: "Messages",
+    Icon: ForumIcon,
+    link: "/messages",
   },
 ];
 
 export const Sidebar: ElementType = () => {
-  const theme = useTheme()
-  const { logout } = useAuth0();
+  const theme = useTheme();
+  const { user, logout } = useAuth0();
+
+  const [selected, setSelected] = useState<number>(0);
 
   return (
     <Drawer
@@ -41,7 +52,6 @@ export const Sidebar: ElementType = () => {
         [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: "border-box" },
       }}
     >
-
       <List>
         <ListItem>
           <Stack
@@ -52,40 +62,86 @@ export const Sidebar: ElementType = () => {
               height: 50,
             }}
           >
-            <GiPineTree style={{ width: 40, height: 40, color: theme.palette.primary.main }} />
+            <GiPineTree
+              style={{
+                width: 40,
+                height: 40,
+                color: theme.palette.primary.main,
+              }}
+            />
           </Stack>
         </ListItem>
-        {routes.map(({ name, icon }, index) => (
-          <ListItem button key={name}>
-            <Stack
-              alignItems="center"
-              justifyContent="center"
-              sx={{
-                width: drawerWidth,
-                height: 50,
-              }}
-            >
-              {icon}
-              <Typography variant="caption">{name}</Typography>
-            </Stack>
+        {routes.map(({ name, Icon, link }, i) => (
+          <ListItem
+            button
+            key={name}
+            onClick={() => setSelected(i)}
+            style={
+              selected === i
+                ? {
+                    background: theme.palette.primary.main,
+                    color: theme.palette.common.white,
+                  }
+                : {}
+            }
+          >
+            <Link href={link}>
+              <Stack
+                alignItems="center"
+                justifyContent="center"
+                sx={{
+                  width: drawerWidth,
+                  height: 50,
+                }}
+              >
+                <Icon
+                  color="primary"
+                  style={
+                    selected === i
+                      ? {
+                          color: theme.palette.common.white,
+                        }
+                      : {}
+                  }
+                />
+                <Typography variant="caption">{name}</Typography>
+              </Stack>
+            </Link>
           </ListItem>
         ))}
       </List>
       <div style={{ flexGrow: 1 }} />
       <List>
-        <ListItem button>
-          <Stack
-            alignItems="center"
-            justifyContent="center"
-            sx={{
-              width: drawerWidth,
-              height: 50,
-            }}
-          >
-            <Avatar />
-          </Stack>
+        <ListItem
+          button
+          onClick={() => setSelected(routes.length)}
+          style={
+            selected === routes.length
+              ? {
+                  background: theme.palette.primary.main,
+                  color: theme.palette.common.white,
+                }
+              : {}
+          }
+        >
+          <Link href="/profile">
+            <Stack
+              alignItems="center"
+              justifyContent="center"
+              sx={{
+                width: drawerWidth,
+                height: 65,
+              }}
+            >
+              <Avatar src={user?.picture} />
+              <Typography variant="caption">Profile</Typography>
+            </Stack>
+          </Link>
         </ListItem>
-        <ListItem button onClick={() => logout({ returnTo: window.location.origin })}>
+        <ListItem
+          button
+          onClick={() => logout({ returnTo: window.location.origin })}
+        >
           <Stack
             alignItems="center"
             justifyContent="center"
@@ -95,6 +151,7 @@ export const Sidebar: ElementType = () => {
             }}
           >
             <LogoutIcon color="primary" />
+            <Typography variant="caption">Logout</Typography>
           </Stack>
         </ListItem>
       </List>

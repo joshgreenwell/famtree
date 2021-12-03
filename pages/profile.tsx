@@ -2,12 +2,12 @@ import type { NextPage } from "next";
 
 import Head from "next/head";
 
-const Home: NextPage = () => {
+const Profile: NextPage = () => {
   return (
     <div>
       <Head>
-        <title>Family Tree</title>
-        <meta name="description" content="See your family tree and more." />
+        <title>Family Tree - Profile</title>
+        <meta name="description" content="Your profile on Family Tree" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main></main>
@@ -15,4 +15,4 @@ const Home: NextPage = () => {
   );
 };
 
-export default Home;
+export default Profile;
